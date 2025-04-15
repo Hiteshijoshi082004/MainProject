@@ -1,14 +1,14 @@
 const mongoose = require("mongoose")
  
 const PostSchema = mongoose.Schema({
-    autoID:{type:Number, default:1},
+    autoId:{type:Number, default:1},
     title:{type:String, deafult:""},
-    image:{type:String, deafult:""},
-    addedById:{type:Number, default:""},
+    image:{type:String, deafult:"no-pic.jpg"},
+    addedById:{type:mongoose.Schema.Types.ObjectId, default:null, ref:"UserModel"},
     description:{type:String, default:""},
     likes:[{type:Number, deafult:""}],
     status:{type:Boolean, default:true},
-    created_At:{type:Date, deafult:Date.now()}
+    createdAt:{type:Date, deafult:Date.now()}
 })
 
 module.exports = mongoose.model("PostModel",PostSchema)

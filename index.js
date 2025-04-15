@@ -5,14 +5,13 @@ const app = express()
 
 const PORT = 1708
 
-// DATABASE CONNECTIVITY
-const db = require("./Server/config/db")
+const db  = require("./Server/config/db")
+const seed = require("./Server/config/seed")
 app.use(express.urlencoded({extended:true}))
 app.use(express.json({limit:"40mb"}))
 
 const api=require("./Server/routes/ApiRoutes")
 app.use("/apis", api)
-
 app.listen(PORT,()=>{
     console.log("SERVER is running at PORT", PORT);
 })

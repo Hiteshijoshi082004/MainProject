@@ -5,7 +5,6 @@ const UserSchema = mongoose.Schema({
     email:{type:String, default:""},
     password:{type:String, default:""},
     userType:{type:Number, default:2},
-    //1->admin, 2->customer, 3-> restro
    status:{type:Boolean, default:true},
    createdAt:{type:Date, default:Date.now()}
 })

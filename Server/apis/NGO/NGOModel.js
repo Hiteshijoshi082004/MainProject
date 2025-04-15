@@ -1,13 +1,13 @@
 const mongoose =require("mongoose")
 
 NGOSchema = mongoose.Schema({
-    autoID:{type:Number, default:1},
-    userId:{type:Number, default:1},
+    autoId:{type:Number, default:1},
+    userId:{type:mongoose.Schema.Types.ObjectId, default:null, ref:"UserModel"},
     description:{type:String, default:""},
     logo:{type:String, default:""},
     address:{type:String, default:""},
     status:{type:Boolean, default:"true"},
-    created_At:{type:Date,default:Date.now()}
+    createdAt:{type:Date,default:Date.now()}
 
 })
 

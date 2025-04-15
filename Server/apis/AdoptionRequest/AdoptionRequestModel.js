@@ -1,11 +1,15 @@
 const mongoose = require("mongoose")
 
 AdoptionRequestSchema = mongoose.Schema({
-    autoID:{type:Number,default:1},
-    addedById:{type:Number, default:1},
-    petID:{type:Number, default:1},
+    autoId:{type:Number,default:1},
+    addedById:{type:mongoose.Schema.Types.ObjectId, default:null, ref:"UserModel"},
+    petId:{type:mongoose.Schema.Types.ObjectId, default:null, ref:"PetModel"},
+    idProof:{type:String,default:"no-pic.jpg"},
+    incomeCertificate:{type:String, default:"no-pic.jpg"},
+    bankStatement:{type:string, deafult:"no-pic.jpg"},
+    addressProof:{type:string, default:"no-pic.jpg"},
     status:{type:Boolean, default:true},
-    created_At:{type:Date, deafult:Date.now()}
+    createdAt:{type:Date, deafult:Date.now()}
 })
 
 module.exports = mongoose.model("AdoptionRequestModel", AdoptionRequestSchema)
