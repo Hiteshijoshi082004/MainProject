@@ -7,7 +7,7 @@ const PostSchema = mongoose.Schema({
     addedById:{type:mongoose.Schema.Types.ObjectId, default:null, ref:"UserModel"},
     description:{type:String, default:""},
     likes:[{type:Number, deafult:""}],
-    status:{type:Boolean, default:true},
+    status:{type:Boolean, deafult:true},
     createdAt:{type:Date, deafult:Date.now()}
 })
 

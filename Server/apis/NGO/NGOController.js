@@ -1,6 +1,6 @@
 const UserModel = require("../Users/UserModel")
 const bcryptjs=require("bcryptjs")
-const VolunteerModel = require("./VolunteerModel")
+const NGOModel = require("./NGOModel")
 
 // REGISTER API
 register=(req,res)=>{
@@ -10,23 +10,20 @@ register=(req,res)=>{
     if(!formData.name){
         validation+="Name is required "
     }
-    if(!formData.email){        
+    if(!formData.email){
         validation+="email is required "
     }
     if(!formData.password){
         validation+="password is required "
     }
-    if(!formData.contact){
-        validation+="contact is required "
+    if(!formData.description){
+        validation+="description is required "
     }
-    // if(!formData.image){
-    //     validation+="image is required "
+    // if(!req.file){
+    //     validation+="logo is required "
     // } 
-    if(!formData.dob){
-        validation+="date of birth is required "
-    }
     if(!formData.address){
-        validation+="address is required "
+        validation+=" address is required "
     }
     if(!!validation){
         res.json({
@@ -45,23 +42,24 @@ register=(req,res)=>{
                 userObj.email=formData.email
                 userObj.password=bcryptjs.hashSync(formData.password, 10)
                 userObj.userType=2 
+
                 userObj.save()
                 .then(async (userData)=>{
                     //multi table insert
-                    let volunteerObj=new VolunteerModel()
-                    let total=await VolunteerModel.countDocuments().exec()
-                    volunteerObj.autoId=total+1 
-                    volunteerObj.phone=formData.phone
-                    volunteerObj.address=formData.address
-                    volunteerObj.userId=userData._id 
-                    volunteerObj.save()
-                    .then((volunteerData)=>{
+                    let ngoObj=new NGOModel()
+                    let total=await NGOModel.countDocuments().exec()
+                    ngoObj.autoId=total+1 
+                    ngoObj.description=formData.description
+                    ngoObj.address=formData.address
+                    ngoObj.userId=userData._id 
+                    ngoObj.save()
+                    .then((ngoData)=>{
                         res.json({
                             status:200,
                             success:true,
-                            message:"Volunteer registered successfully!!",
+                            message:"NGO registered successfully!!",
                             data1:userData,
-                            data2:volunteerData
+                            data2:ngoData
                         })
                     })
                     .catch((err)=>{
@@ -70,8 +68,7 @@ register=(req,res)=>{
                         res.json({
                             status:500,
                             success:false,
-                            message:"Internal server error!!",
-                            error:err
+                            message:"Internal server error!!"
                         })
                     })
                 })
@@ -79,8 +76,7 @@ register=(req,res)=>{
                     res.json({
                         status:500,
                         success:false,
-                        message:"Internal server error!!",
-                        error:err
+                        message:"Internal server error!!"
                     })
                 })
             }else{
@@ -111,24 +107,24 @@ all=(req,res)=>{
     let currentPage = formData.currentPage
     delete formData.limit 
     delete formData.currentPage
-    VolunteerModel.find(formData)
+    NGOModel.find(formData)
     .populate("userId")
     .limit(limit)
     .skip((currentPage-1)*limit)
-    .then(async(volunteerData)=>{
-        if(volunteerData.length>0){
-            let total = await VolunteerModel.countDocuments().exec()
+    .then(async(ngoData)=>{
+        if(ngoData.length>0){
+            let total = await NGOModel.countDocuments().exec()
             res.json({
                 status:200,
                 success:true,
-                message:"Volunteer loaded",
-                data:volunteerData
+                message:"NGO data loaded",
+                data:ngoData
             })
         }else{
             res.json({
                 status:404,
                 success:false,
-                message:"Volunteer not found!!"
+                message:"NGO data not found!!"
             })
        }
        
@@ -143,7 +139,9 @@ all=(req,res)=>{
         })
     })
 }
-// SINGLE API 
+
+
+// SINGLE API
 single=(req,res)=>{
     let validation=""
     if(!req.body._id){
@@ -156,20 +154,21 @@ single=(req,res)=>{
             message:validation
         })
     }else{
-        VolunteerModel.findOne({_id:req.body._id})
-        .then((volunteerData)=>{
-            if(!volunteerData){
+        NGOModel.findOne({_id:req.body._id})
+        .populate("userId")
+        .then((ngoData)=>{
+            if(!ngoData){
                 res.json({
                     status:404,
                     success:false,
-                    message:"No Volunteer found!!"
+                    message:"No NGO data found!!"
                 })
             }else{
                 res.json({
                     status:200,
                     success:true,
-                    message:"Volunteer Loaded",
-                    data:volunteerData
+                    message:"NGO data Loaded",
+                    data:ngoData
                 })
             }
             
@@ -200,23 +199,23 @@ changeStatus = (req,res)=>{
     }
     else{
         UserModel.findOne({_id:formData.userId})
-        .then((volunteerData)=>{
-            if(!volunteerData){
+        .then((ngoData)=>{
+            if(!ngoData){
                 res.json({
                     status:404,
                     success:false,
-                    message:" Volunteer not found"
+                    message:"NGO data not found"
                 })
             }
             else{
-                volunteerData.status=!volunteerData.status
-                volunteerData.save()
-                .then((volunteerData)=>{
+                ngoData.status=!ngoData.status
+                ngoData.save()
+                .then((ngoData)=>{
                     res.json({
                         status:200,
                         success:true,
                         message:"status updated",
-                        data:volunteerData
+                        data:ngoData
                     })
                 })
                 .catch((err)=>{
