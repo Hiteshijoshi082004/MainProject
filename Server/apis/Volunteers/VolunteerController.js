@@ -52,8 +52,8 @@ register=(req,res)=>{
                     let volunteerObj=new VolunteerModel()
                     let total=await VolunteerModel.countDocuments().exec()
                     volunteerObj.autoId=total+1 
-                    volunteerObj.contact=formData.phone
-                    volunteerObj.address=formData.contact
+                    volunteerObj.contact=formData.contact
+                    volunteerObj.address=formData.address
                     volunteerObj.dob = formData.dob
                     volunteerObj.userId=userData._id 
                     let url = await uploadImg(req.file.buffer)
@@ -101,13 +101,13 @@ register=(req,res)=>{
             res.json({
                 status:500,
                 success:false,
-                message:"Internal server error!!"
+                message:"Internal server error!!",
+                error:err.message
             })
         })
     }
     
 }
-
 // ALL API
 all=(req,res)=>{
     let formData = req.body
@@ -116,7 +116,7 @@ all=(req,res)=>{
     delete formData.limit 
     delete formData.currentPage
     VolunteerModel.find(formData)
-    .populate("userId")
+    // .populate("userId")
     .limit(limit)
     .skip((currentPage-1)*limit)
     .then(async(volunteerData)=>{
@@ -126,6 +126,7 @@ all=(req,res)=>{
                 status:200,
                 success:true,
                 message:"Volunteer loaded",
+                total:total,
                 data:volunteerData
             })
         }else{
@@ -143,7 +144,7 @@ all=(req,res)=>{
             status:500,
             success:false,
             message:"Internal server error",
-            error:err
+            error:err.message
         })
     })
 }
@@ -168,6 +169,7 @@ single=(req,res)=>{
                     success:false,
                     message:"No Volunteer found!!"
                 })
+                console.log(4);
             }else{
                 res.json({
                     status:200,
@@ -182,11 +184,140 @@ single=(req,res)=>{
             res.json({
                 status:500,
                 success:false,
-                message:"Internal server error!!"
+                message:"Internal server error!!",
+                error:err.message
             })
         })
     }    
 }
+// UPDATE API 
+// update = (req, res) => {
+//     let validation = "";
+//     let formData = req.body;
+
+//     if (!formData._id) {
+//         validation += "id  is required ";
+//     }
+//     if (!formData.userId) {
+//         validation += "userId is required ";
+//     }
+
+//     if (!!validation.trim()) {
+//         res.json({
+//             status: 422,
+//             success: false,
+//             message: validation
+//         });
+//     }
+//      else {
+//         // First: Update user data
+//         UserModel.findOne({ _id: formData.userId })
+//             .then(async (userData) => {
+//                 if (!userData) {
+//                     return res.json({
+//                         status: 404,
+//                         success: false,
+//                         message: "User not found"
+//                     });
+//                 }
+//                 else{
+//                 res.json({
+//                     status:200,
+//                     success:false,
+//                     message:"User Data already exists",
+//                 })
+//                 }
+//                 // updating the user 
+//                 if (!!formData.name) {
+//                     userData.name = formData.name;
+//                 }
+//                 if (!!formData.email) {
+//                     userData.email = formData.email;
+//                 }
+//                 if (!!formData.password) {
+//                     userData.password = await bcryptjs.hash(formData.password, 10);
+//                 }
+
+//                 userData.save()
+//                     .then((savedUser) => {
+//                         // Now update volunteer
+//                         VolunteerModel.findOne({ _id: formData._id })
+//                             .then(async(volunteerData) => {
+//                                 if (!volunteerData) {
+//                                     return res.json({
+//                                         status: 404,
+//                                         success: false,
+//                                         message: "Volunteer doesn't exist"
+//                                     });
+//                                 }
+
+//                                 if (!!formData.address) {
+//                                     volunteerData.address = formData.address;
+//                                 }
+//                                 if (!!formData.contact) {
+//                                     volunteerData.contact = formData.contact;
+//                                 }
+//                                 if (!!formData.dob) {
+//                                     volunteerData.dob = formData.dob;
+//                                 }
+//                                 if(!!req.file){
+//                                     let url = await uploadImg(req.file.buffer)
+//                                     volunteerData.userImage = url
+//                                 }
+
+//                                 volunteerData.save()
+//                                     .then((savedVolunteer) => {
+//                                         res.json({
+//                                             status: 200,
+//                                             success: true,
+//                                             message: "Volunteer updated successfully",
+//                                             data1:savedUser,
+//                                             data2:savedVolunteer
+                                            
+//                                         });
+//                                     })
+//                                     .catch((err) => {
+//                                         res.json({
+//                                             status: 500,
+//                                             success: false,
+//                                             message: "Internal Server Error",
+//                                             error: err.message
+//                                         });
+//                                     });
+//                             })
+//                             .catch((err) => {
+//                                 res.json({
+//                                     status: 500,
+//                                     success: false,
+//                                     message: "Internal Server Error",
+//                                     error: err.message
+//                                 });
+                            
+//                             });
+//                     })
+//                     .catch((err) => {
+//                         res.json({
+//                             status: 500,
+//                             success: false,
+//                             message: "Internal Server Error",
+//                             error: err.message
+//                         });
+                        
+//                     });
+//             })
+//             .catch((err) => {
+//                 res.json({
+//                     status: 500,
+//                     success: false,
+//                     message: "Internal Server Error",
+//                     error: err.message
+//                 });
+               
+//             });
+        
+//     }
+// };
+
 
 // CHANGE STATUS API
 changeStatus = (req,res)=>{
@@ -220,7 +351,8 @@ changeStatus = (req,res)=>{
                         status:200,
                         success:true,
                         message:"status updated",
-                        data:volunteerData
+                        data:volunteerData,
+                        // data2:userData
                     })
                 })
                 .catch((err)=>{
@@ -228,7 +360,7 @@ changeStatus = (req,res)=>{
                         status:500,
                         success:false,
                         message:"Internal Server Error",
-                        error:err
+                        error:err.message
                     })
                 })
             }
@@ -238,9 +370,9 @@ changeStatus = (req,res)=>{
                 status:500,
                 success:false,
                 message:"Internal Server Error",
-                error:err
+                error:err.message
             })
         })
     }
 }
-module.exports={register, all, single, changeStatus}
+module.exports={register, all, single,update, changeStatus}

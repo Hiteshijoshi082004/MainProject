@@ -16,7 +16,7 @@ const multer = require("multer")
 let logoData = multer.memoryStorage()
 const logoUpload = multer({storage:logoData})
 router.post("/NGO/register",logoUpload.single("logo"),NgoController.register)
-// VVOLUNTEER REGISTER
+// VOLUNTEER REGISTER
 let imageData = multer.memoryStorage()
 const imageUpload = multer({storage:imageData})
 router.post("/Volunteer/register",imageUpload.single("userImage") ,VolunteerController.register)
@@ -27,9 +27,11 @@ router.post("/User/login", UserController.login)
 router.post("/NGO/all", NgoController.all)
 router.post("/NGO/single", NgoController.single)
 
-// VOLUNTEER
-router.post("/Volunteer/regsiter", VolunteerController.register)
-router.post("/volunteers/single", VolunteerController.single)
+// VOLUNTEER 
+router.post("/Volunteer/all", VolunteerController.all)
+router.post("/volunteer/single", VolunteerController.single)
+router.post("/Volunteer/update",imageUpload.single("userImage"),VolunteerController.update)
+router.post("/Volunteer/changestatus",VolunteerController.changeStatus)
 // BREED 
 let BreedStorage = multer.memoryStorage()
 const BreedUpload = multer({storage:BreedStorage})
