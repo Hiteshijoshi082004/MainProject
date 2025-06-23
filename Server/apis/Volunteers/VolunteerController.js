@@ -1,5 +1,6 @@
 const UserModel = require("../Users/UserModel")
 const bcryptjs=require("bcryptjs")
+const {uploadImg} = require("../../Utilities/helper")
 const VolunteerModel = require("./VolunteerModel")
 
 // REGISTER API
@@ -11,17 +12,17 @@ register=(req,res)=>{
         validation+="Name is required "
     }
     if(!formData.email){        
-        validation+="email is required "
+        validation+="Email is required "
     }
     if(!formData.password){
-        validation+="password is required "
+        validation+="Password is required "
     }
     if(!formData.contact){
-        validation+="contact is required "
+        validation+="Contact is required "
     }
-    // if(!formData.image){
-    //     validation+="image is required "
-    // } 
+    if(!req.file){
+        validation+="User Profile is required "
+    } 
     if(!formData.dob){
         validation+="date of birth is required "
     }
@@ -44,16 +45,19 @@ register=(req,res)=>{
                 userObj.name=formData.name 
                 userObj.email=formData.email
                 userObj.password=bcryptjs.hashSync(formData.password, 10)
-                userObj.userType=2 
+                userObj.userType=3
                 userObj.save()
                 .then(async (userData)=>{
                     //multi table insert
                     let volunteerObj=new VolunteerModel()
                     let total=await VolunteerModel.countDocuments().exec()
                     volunteerObj.autoId=total+1 
-                    volunteerObj.phone=formData.phone
-                    volunteerObj.address=formData.address
+                    volunteerObj.contact=formData.phone
+                    volunteerObj.address=formData.contact
+                    volunteerObj.dob = formData.dob
                     volunteerObj.userId=userData._id 
+                    let url = await uploadImg(req.file.buffer)
+                    volunteerObj.userImage = url 
                     volunteerObj.save()
                     .then((volunteerData)=>{
                         res.json({
@@ -71,7 +75,7 @@ register=(req,res)=>{
                             status:500,
                             success:false,
                             message:"Internal server error!!",
-                            error:err
+                            error:err.message
                         })
                     })
                 })
@@ -80,7 +84,7 @@ register=(req,res)=>{
                         status:500,
                         success:false,
                         message:"Internal server error!!",
-                        error:err
+                        error:err.message
                     })
                 })
             }else{
@@ -88,7 +92,7 @@ register=(req,res)=>{
                     status:200,
                     success:false,
                     message:"User already exist with same email",
-                    data:userData
+                    data1:userData
                 })
             }
             

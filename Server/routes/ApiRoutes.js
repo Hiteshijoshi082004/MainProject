@@ -11,9 +11,15 @@ const PetListingController = require("../apis/PetListing/PetListingController")
 const router=express.Router()
 const multer = require("multer")
 
-// REGISTER
-router.post("/Volunteers/register", VolunteerController.register)
-router.post("/NGO/register", NgoController.register)
+// REGISTER ROUTES
+// NGO REGISTER
+let logoData = multer.memoryStorage()
+const logoUpload = multer({storage:logoData})
+router.post("/NGO/register",logoUpload.single("logo"),NgoController.register)
+// VVOLUNTEER REGISTER
+let imageData = multer.memoryStorage()
+const imageUpload = multer({storage:imageData})
+router.post("/Volunteer/register",imageUpload.single("userImage") ,VolunteerController.register)
 // LOGIN
 router.post("/User/login", UserController.login)
 
@@ -50,7 +56,9 @@ router.post("/Post/update",PostController.update)
 router.post("/Post/changestatus", PostController.changeStatus)
 
 // ADOPTION 
-router.post("/Adoption/add",AdoptionController.add)
+// let AdoptionStorage =  multer.memoryStorage()
+// const AdoptionUpload = multer({storage: AdoptionStorage})
+// router.post("/Adoption/add",AdoptionUpload.single("idProof"),AdoptionController.add)
 
 // DONATION
 router.post("/Donation/add",DonationController.add)

@@ -1,29 +1,30 @@
 const UserModel = require("../Users/UserModel")
 const bcryptjs=require("bcryptjs")
 const NGOModel = require("./NGOModel")
+const { uploadImg } = require("../../Utilities/helper")
 
 // REGISTER API
 register=(req,res)=>{
-    // console.log(123);
+    console.log(1);
     let formData=req.body 
     let validation=""
     if(!formData.name){
         validation+="Name is required "
     }
     if(!formData.email){
-        validation+="email is required "
+        validation+="Email is required "
     }
     if(!formData.password){
-        validation+="password is required "
+        validation+="Password is required "
     }
     if(!formData.description){
-        validation+="description is required "
+        validation+="Description is required "
     }
-    // if(!req.file){
-    //     validation+="logo is required "
-    // } 
+    if(!req.file){
+        validation+="Logo is required "
+    } 
     if(!formData.address){
-        validation+=" address is required "
+        validation+=" Address is required "
     }
     if(!!validation){
         res.json({
@@ -31,7 +32,10 @@ register=(req,res)=>{
             success:false,
             message:validation
         })
+        console.log(2);
+        
     }else{
+        console.log(3);
         UserModel.findOne({email:formData.email})
         .then(async (userData)=>{
             if(!userData){
@@ -42,16 +46,18 @@ register=(req,res)=>{
                 userObj.email=formData.email
                 userObj.password=bcryptjs.hashSync(formData.password, 10)
                 userObj.userType=2 
-
                 userObj.save()
                 .then(async (userData)=>{
                     //multi table insert
+                    console.log(4);
                     let ngoObj=new NGOModel()
                     let total=await NGOModel.countDocuments().exec()
                     ngoObj.autoId=total+1 
                     ngoObj.description=formData.description
                     ngoObj.address=formData.address
                     ngoObj.userId=userData._id 
+                    let url = await uploadImg(req.file.buffer)
+                    ngoObj.logo = url 
                     ngoObj.save()
                     .then((ngoData)=>{
                         res.json({
@@ -68,7 +74,8 @@ register=(req,res)=>{
                         res.json({
                             status:500,
                             success:false,
-                            message:"Internal server error!!"
+                            message:"Internal server error!!",
+                            error:err.message
                         })
                     })
                 })
@@ -76,7 +83,8 @@ register=(req,res)=>{
                     res.json({
                         status:500,
                         success:false,
-                        message:"Internal server error!!"
+                        message:"Internal server error!!",
+                        error:err.message
                     })
                 })
             }else{
@@ -93,7 +101,8 @@ register=(req,res)=>{
             res.json({
                 status:500,
                 success:false,
-                message:"Internal server error!!"
+                message:"Internal server error!!",
+                error:err.message
             })
         })
     }
