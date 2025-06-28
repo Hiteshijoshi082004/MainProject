@@ -30,7 +30,9 @@ router.post("/NGO/single", NgoController.single)
 // VOLUNTEER 
 router.post("/Volunteer/all", VolunteerController.all)
 router.post("/volunteer/single", VolunteerController.single)
-router.post("/Volunteer/update",imageUpload.single("userImage"),VolunteerController.update)
+let updatedImg = multer.memoryStorage()
+const updateImgUpload = multer({storage:updatedImg})
+router.post("/Volunteer/update",updateImgUpload.single("userImage"),VolunteerController.update)
 router.post("/Volunteer/changestatus",VolunteerController.changeStatus)
 // BREED 
 let BreedStorage = multer.memoryStorage()
@@ -65,6 +67,9 @@ router.post("/Post/changestatus", PostController.changeStatus)
 // DONATION
 router.post("/Donation/add",DonationController.add)
 // PETSTORY
-router.post("petStory/all", PetStoryController.all)
-router.post("petStory/single", PetStoryController.single)
+router.post("/petstory/add",PetStoryController.add)
+router.post("/petstory/all", PetStoryController.all)
+router.post("/petstory/single", PetStoryController.single)
+router.post("/petstory/update",PetStoryController.update)
+router.post("/petstory/changestatus",PetStoryController.changeStatus)
 module.exports =router

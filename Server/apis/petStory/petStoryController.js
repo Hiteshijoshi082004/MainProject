@@ -1,5 +1,5 @@
 const petStoryModel = require("./petStoryModel")
-
+// ADD API
 add= (req,res)=>{
     let validation="" 
     let formData=req.body 
@@ -26,6 +26,7 @@ add= (req,res)=>{
                 petStoryData.autoId=total+1
                 petStoryData.title=formData.title
                 petStoryData.description=formData.description 
+                petStoryData.petId=formData.petId
                 petStoryData.save()
                 .then((petStoryData)=>{
                     res.json({
@@ -39,7 +40,8 @@ add= (req,res)=>{
                     res.json({
                         status:500,
                         success:false,
-                        message:"internal server error"
+                        message:"internal server error",
+                        error:err.message
                     })
                 })
             }else{
@@ -54,13 +56,14 @@ add= (req,res)=>{
             res.json({
                 status:500,
                 success:false,
-                message:"Internal server error!!"
+                message:"Internal server error!",
+                error:err.message
             })
         })
        
     }
 }
-
+// ALL API
 all=(req,res)=>{
     let formData=req.body
     let limit =formData.limit
@@ -96,11 +99,11 @@ all=(req,res)=>{
             status:500,
             success:false,
             message:"Internal server error",
-            error:err
+            error:err.message
         })
     })
 }
-
+// SINGLE API
 single=(req,res)=>{
     let validation=""
     if(!req.body._id){
@@ -140,7 +143,7 @@ single=(req,res)=>{
         })
     }    
 }
-
+// UPDATE API 
 update=(req, res)=>{
     let validation=""
     let formData=req.body 
@@ -197,7 +200,7 @@ update=(req, res)=>{
         
     }
 }
-
+// CAHNGE STATUS API
 changeStatus=(req, res)=>{
     //validation 
     let validation=""

@@ -2,8 +2,8 @@ const mongoose = require("mongoose")
 
 const petStorySchema = mongoose.Schema({
     autoId:{type:Number, default:1},
-    petId:{type:mongoose.Schema.Types.ObjectId, default:null, ref:"PetModel"},
-    title:{type:String, deafult:""},
+    petId:{type:mongoose.Schema.Types.ObjectId, default:null, ref:"PetListingModel"},
+    title:{type:String, default:""},
     description:{type:String, default:""},
     addedById:{type:mongoose.Schema.Types.ObjectId, default:null, ref:"UserModel"},
     status:{type:Boolean, default:true},
