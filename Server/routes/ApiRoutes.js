@@ -26,7 +26,7 @@ router.post("/User/login", UserController.login)
 // NGO 
 router.post("/NGO/all", NgoController.all)
 router.post("/NGO/single", NgoController.single)
-
+router.post("/NGO/update", NgoController.update)
 // VOLUNTEER 
 router.post("/Volunteer/all", VolunteerController.all)
 router.post("/volunteer/single", VolunteerController.single)

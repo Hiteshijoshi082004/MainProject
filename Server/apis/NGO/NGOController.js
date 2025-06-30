@@ -148,8 +148,6 @@ all=(req,res)=>{
         })
     })
 }
-
-
 // SINGLE API
 single=(req,res)=>{
     let validation=""
@@ -191,7 +189,70 @@ single=(req,res)=>{
         })
     }    
 }
-
+// UPDATE API 
+update=(req, res)=>{
+    //validation 
+    let validation=""
+    let formData=req.body 
+    if(!formData._id){
+        validation+="_id is required"
+    }
+    if(!!validation.trim()){
+        res.json({
+            status:422,
+            success:false,
+            message:validation
+        })
+    }else{
+        NGOModel.findOne({_id:formData._id})
+        .then(async(ngoData)=>{
+            if(!ngoData){
+                res.json({
+                    status:404,
+                    success:false,
+                    message:"Data doesn't exist"
+                })
+            }else{
+                if(!!formData.description){
+                    ngoData.description=formData.description 
+                }   
+                if(!!formData.address){            
+                    ngoData.address=formData.address
+                }
+                if(!!req.file){
+                    let url = await uploadImg(req.file.buffer)
+                    ngoData.logo = url 
+                }
+                ngoData.save()
+                .then((ngoData)=>{
+                    res.json({
+                        status:200,
+                        success:true,
+                        message:"NGO Details updated",
+                        data:ngoData
+                    })
+                })
+                .catch((err)=>{
+                    res.json({
+                        status:500,
+                        success:false,
+                        message:"Internal server error!!",
+                        error:err.message
+                    })
+                })                
+            }        
+        })
+        .catch((err)=>{
+            res.json({
+                status:500,
+                success:false,
+                message:"Internal server error!!",
+                error:err.message
+            })
+        })
+        
+    }
+}
 // CHANGE STATUS API
 changeStatus = (req,res)=>{
     let validation=""
@@ -247,4 +308,4 @@ changeStatus = (req,res)=>{
         })
     }
 }
-module.exports={register, all, single, changeStatus}
+module.exports={register, all, single,update, changeStatus}

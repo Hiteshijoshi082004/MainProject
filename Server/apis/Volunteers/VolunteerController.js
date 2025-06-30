@@ -257,9 +257,6 @@ update=(req, res)=>{
         
     }
 }
-
-
-
 // CHANGE STATUS API
 changeStatus = (req,res)=>{
     let validation=""
