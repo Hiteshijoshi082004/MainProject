@@ -67,6 +67,7 @@ router.post("/Post/changestatus", PostController.changeStatus)
 // DONATION
 router.post("/Donation/add",DonationController.add)
 router.post("/Donation/all",DonationController.all)
+// router.post("/Donation/single",DonationController.single)
 // PETSTORY
 router.post("/petstory/add",PetStoryController.add)
 router.post("/petstory/all", PetStoryController.all)

@@ -110,7 +110,46 @@ all=(req,res)=>{
     })
 }
 // SINGLE API
- 
+// single =(req,res)=>{
+//     let validation=""
+//     if(!req.body._id){
+//         validation+="_id is required"
+//     }
+//     if(!!validation){
+//         res.json({
+//             status:422,
+//             success:false,
+//             message:validation
+//         })
+//     }else{
+//         DonationModel.findOne({_id:req.body._id})
+//         .then((donationData)=>{
+//             if(!donationData){
+//                 res.json({
+//                     status:404,
+//                     success:false,
+//                     message:"No Donation found!!"
+//                 })
+//             }else{
+//                 res.json({
+//                     status:200,
+//                     success:true,
+//                     message:"Donation Loaded",
+//                     data:donationData
+//                 })
+//             }
+            
+//         })
+//         .catch((err)=>{
+//             res.json({
+//                 status:500,
+//                 success:false,
+//                 message:"Internal server error!!",
+//                 error:err.message
+//             })
+//         })
+//     }    
+// }
 
 
 module.exports = {add,all}
