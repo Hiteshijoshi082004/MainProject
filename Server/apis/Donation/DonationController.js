@@ -1,5 +1,5 @@
+const { single } = require("../Volunteers/VolunteerController");
 const DonationModel = require("./DonationModel")
-
 // ADD API
 add = (req,res)=>{
     console.log(req.body);
@@ -29,6 +29,7 @@ add = (req,res)=>{
                 let donationObj= new DonationModel()
                 let total=await DonationModel.countDocuments().exec()
                 donationObj.autoID=total+1
+                donationObj.ngoId = formData.ngoId
                 donationObj.donationType=formData.donationType
                 donationObj.donationDetails=formData.donationDetails 
                 // donationObj.image="categoryimages/"+req.file.filename
@@ -70,6 +71,46 @@ add = (req,res)=>{
        
     }
 }
+// ALL API
+all=(req,res)=>{
+    let formData=req.body
+    let limit =formData.limit
+    let currentPage=formData.currentPage
+    delete formData.limit 
+    delete formData.currentPage
+    DonationModel.find(req.body)
+    .limit(limit)
+    .skip((currentPage-1)*limit)
+    // .sort({createdAt:-1})
+    .then(async (donationData)=>{
+        if(donationData.length>0){
+            let total=await DonationModel.countDocuments().exec()
+            res.json({
+                status:200,
+                success:true,
+                message:"Donation loaded",
+                total:total,
+                data:donationData
+            })
+        }else{
+            res.json({
+                status:404,
+                success:false,
+                message:"Donation not found!!"
+            })
+       }
+    })
+    .catch((err)=>{
+        res.json({
+            status:500,
+            success:false,
+            message:"Internal server error",
+            error:err.message
+        })
+    })
+}
+// SINGLE API
+ 
 
 
-module.exports = {add}
+module.exports = {add,all}
